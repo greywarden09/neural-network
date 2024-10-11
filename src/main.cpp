@@ -1,12 +1,24 @@
+#include <fstream>
 #include <iostream>
 
-#include "common/mnist_loader.hpp"
+#include "mlp/perceptron.hpp"
 
 int main() {
-    using nn_common::MNISTLoader;
+    const auto perceptron = new mlp::Perceptron(10, 0.1f, nn::SigmoidActivationFunction());
+    auto weights = perceptron->getWeights();
 
-    const MNISTLoader loader(R"(C:\Users\lasma\work\neural-network\data)");
-    auto data = loader.loadTrainingData();
-    const auto x = data[0].first;
-    std::cout << static_cast<int>(data[0].first) << std::endl;
+    std::ofstream fs("perceptron.bin", std::ios::out | std::ios::binary);
+    for (const auto weight : weights) {
+        fs.write(reinterpret_cast<const char*>(&weight), sizeof(weight));
+    }
+    fs.close();
+
+    //
+    std::ifstream ifs("perceptron.bin", std::ios::binary);
+    std::vector<float> loadedWeights(10);
+    for (auto i = 0; i < 10; i++) {
+        ifs.read(reinterpret_cast<char*>(&loadedWeights[i]), sizeof(float));
+    }
+
+    delete perceptron;
 }

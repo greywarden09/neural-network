@@ -12,6 +12,9 @@ namespace mlp {
         std::ranges::generate(weights, [&]() { return distribution(generator); });
     }
 
+    Perceptron::Perceptron(): Perceptron(0, 0.0f, nn::SigmoidActivationFunction()) {
+    }
+
     Perceptron::Perceptron(const uint32_t &inputs,
                            const float &learningRate,
                            const nn::ActivationFunction &activationFunction)
@@ -36,5 +39,9 @@ namespace mlp {
         }
 
         bias += learningRate * gradient;
+    }
+
+    f_vector Perceptron::getWeights() const {
+        return weights;
     }
 }
